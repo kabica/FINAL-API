@@ -1,0 +1,16 @@
+DROP TABLE IF EXISTS users CASCADE;
+CREATE TABLE users (
+  id SERIAL PRIMARY KEY NOT NULL,
+  name VARCHAR(255),
+  email VARCHAR(255),
+  pw VARCHAR(255),
+  event_id INTEGER REFERENCES events(id)
+);
+
+DROP TABLE IF EXISTS events CASCADE;
+CREATE TABLE events (
+  id SERIAL PRIMARY KEY NOT NULL,
+  name VARCHAR(255),
+  title TEXT,
+  count INTEGER
+);

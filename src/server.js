@@ -3,6 +3,7 @@
 require('dotenv').config();
 const PORT = process.env.PORT || 8000;
 
+const apiRoutes = require('../routes/testAPI.js');
 const bodyParser = require('body-parser');
 const morgan = require('morgan');
 const express = require('express');
@@ -17,9 +18,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 
 // =============================== SERVER ROUTES =============================== //
-app.get('/', (req , res) => {
-  res.json({status: 'API functioning as expected.'})
-});
+app.use('/', apiRoutes());
 
 app.listen(PORT, () => {
   console.log(`Server is listening on PORT: ${PORT}`)
