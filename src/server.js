@@ -1,6 +1,6 @@
 // server.js
 
-require('dotenv').config();
+require('dotenv').config()
 const PORT = process.env.PORT || 8000;
 
 const apiRoutes = require('../routes/testAPI.js');
@@ -23,3 +23,7 @@ app.use('/', apiRoutes());
 app.listen(PORT, () => {
   console.log(`Server is listening on PORT: ${PORT}`)
 });
+
+
+
+
