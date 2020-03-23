@@ -76,8 +76,18 @@ const postComment = function(author, user, text) {
   return db.query(`INSERT INTO comments (author_id, user_id, text) VALUES ($1, $2, $3);`, [author, user, text])
   .then(res => res.rows)
 }
+const getPassword = function(email) {
+  return db.query(`SELECT password FROM users WHERE email = $1;`, [email])
+  .then(res => res.rows)
+  .catch(error => console.log(error))
+}
 
-let testObj = {};
+const checkEmail = function(email) {
+  return db.query(`SELECT email FROM users WHERE email = $1;`, [email])
+  .then(res => res.rows)
+  .catch(error => console.log(error))
+}
+
 
 // ============================ API ROUTER ============================ //
 module.exports = () => {
@@ -156,36 +166,20 @@ module.exports = () => {
     .catch(error => console.error(error))
   })
 
-  router.post('/alex', (req , res) => {
-    console.log(req.body)
-  });
-
   // USER AUTHENTICATION
-  // Payload = the encrypted email stored in Clinet sessionStorage
+  // Payload = the encrypted email stored in Client sessionStorage
   // Email is decrypted and run against the database 
   // If there is a match, verified === true
   router.post('/auth', async(req , res) => {
     const decryptedString = cryptr.decrypt(req.body.email);
     const verify = await checkEmail(decryptedString);
     const verified = verify[0] ? 'true' : 'false'
-
     res.json({em: decryptedString, verified: verified})
   });
 
-  const getPassword = function(email) {
-    return db.query(`SELECT password FROM users WHERE email = $1;`, [email])
-    .then(res => res.rows)
-    .catch(error => console.log(error))
-  }
-  const checkEmail = function(email) {
-    return db.query(`SELECT email FROM users WHERE email = $1;`, [email])
-    .then(res => res.rows)
-    .catch(error => console.log(error))
-  }
   router.post('/login', async(req , res) => {
     let {email , password} = req.body;
     let storedEmail = await checkEmail(email);
-    // let verifyEmail = storedEmail[0] ? true: false;
     if(!storedEmail[0]) {
       res.json({error: 'Invalid Email'})
       return;
@@ -195,9 +189,7 @@ module.exports = () => {
     storedPW = storedPW[0].password;
 
     if(bcrypt.compareSync(password, storedPW)) {
-      console.log(storedEmail)
       const encryptedEmail = cryptr.encrypt(storedEmail[0].email);
-      console.log(encryptedEmail)
       res.json({Encryption: encryptedEmail})
     } else {
       res.json({error: 'Invalid Password'})
@@ -219,10 +211,7 @@ module.exports = () => {
       res.json({Encryption: encryptedEmail})
     })
     .catch(err => console.log(err))
-  })
-
-  
-
+  });
 
   return router;
 };
